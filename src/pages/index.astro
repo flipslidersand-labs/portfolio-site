@@ -46,6 +46,36 @@ const projects = [
 		enDesc: "Record and analyze technical decisions. The system itself explains the portfolio.",
 		skills: "Astro / Supabase / RLS",
 		url: "https://github.com/users/yukilabs-core/projects/6"
+	},
+	{
+		id: 6,
+		jpTitle: "context-smith",
+		enTitle: "context-smith",
+		jpDesc: "Git リポジトリからタスク関連コードを抽出し、トークン予算内のコンテキストを LLM 向けに生成する CLI。オフラインファースト設計。",
+		enDesc: "Rust CLI that extracts task-relevant code from Git repos into token-budgeted context bundles for LLMs. Offline-first, dependency-light.",
+		skills: "Rust / Tantivy / Tree-sitter / BM25",
+		url: "https://github.com/flipslidersand/context-smith",
+		external: true
+	},
+	{
+		id: 7,
+		jpTitle: "stream-rail",
+		enTitle: "stream-rail",
+		jpDesc: "タンブリングウィンドウ・ウォーターマーク・永続状態を備えたリアルタイムストリーム処理エンジン。",
+		enDesc: "Real-time stream processing engine in Go with tumbling windows, watermarks, and persistent state.",
+		skills: "Go / BadgerDB / NATS",
+		url: "https://github.com/flipslidersand/stream-rail",
+		external: true
+	},
+	{
+		id: 8,
+		jpTitle: "wasm-runtime",
+		enTitle: "wasm-runtime",
+		jpDesc: "WebAssembly バイナリの全 known section (0–12) を型付き構造体にデコードするパーサ。136 テスト。",
+		enDesc: "WebAssembly binary parser that decodes every known section (ids 0–12) into typed structs. 136 tests.",
+		skills: "Rust / LEB128",
+		url: "https://github.com/flipslidersand/wasm-runtime",
+		external: true
 	}
 ];
 ---
@@ -178,12 +208,17 @@ const projects = [
 
 		<div class="projects">
 			{projects.map(project => (
-				<a href={`/project-0${project.id}/?lang=${lang}`} class="project-card">
+				<a
+					href={project.external ? project.url : `/project-0${project.id}/?lang=${lang}`}
+					target={project.external ? "_blank" : undefined}
+					rel={project.external ? "noopener noreferrer" : undefined}
+					class="project-card"
+				>
 					<div class="project-num">#{project.id}</div>
 					<h3>{lang === "jp" ? project.jpTitle : project.enTitle}</h3>
 					<p>{lang === "jp" ? project.jpDesc : project.enDesc}</p>
 					<div class="project-skills">{project.skills}</div>
-					<div class="project-link">→ 詳細を見る</div>
+					<div class="project-link">{project.external ? (lang === "jp" ? "→ GitHub で見る" : "→ View on GitHub") : (lang === "jp" ? "→ 詳細を見る" : "→ View details")}</div>
 				</a>
 			))}
 		</div>
