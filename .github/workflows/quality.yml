@@ -10,7 +10,8 @@ jobs:
   quality:
     uses: flipslidersand-labs/qa-workflows/.github/workflows/node-test.yml@main
     with:
-      node-version: "20"
+      # Astro 6.x は Node >=22.12.0 が必要
+      node-version: "22"
       package-manager: "npm"
       run-test: false
       run-build: true
