@@ -22,6 +22,7 @@ const texts = {
     assignee_col: "担当者",
     loading: "読み込み中...",
     error: "エラーが発生しました",
+    timeoutError: "サーバーの応答がありません（タイムアウト）",
   },
   en: {
     title: "Business Log Visualization",
@@ -43,6 +44,7 @@ const texts = {
     assignee_col: "Assignee",
     loading: "Loading...",
     error: "Error loading data",
+    timeoutError: "The server did not respond in time",
   },
 };
 
@@ -262,17 +264,34 @@ const t = texts[lang === "en" ? "en" : "jp"];
 
     <script define:vars={{ lang, t }}>
       const API_SERVER_URL = import.meta.env.PUBLIC_API_SERVER_URL;
+      const FETCH_TIMEOUT_MS = 15000;
+
+      async function fetchWithTimeout(url, timeoutMs) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          return await fetch(url, { signal: controller.signal });
+        } catch (err) {
+          if (err.name === "AbortError") {
+            throw new Error(t.timeoutError || `Request timed out after ${timeoutMs / 1000}s`);
+          }
+          throw err;
+        } finally {
+          clearTimeout(timer);
+        }
+      }
 
       async function loadDashboard() {
         try {
-          // Fetch tasks from API
-          const tasksRes = await fetch(`${API_SERVER_URL}/api/tasks`);
+          // Fetch tasks from API (aborts after FETCH_TIMEOUT_MS so a hung
+          // backend shows an error instead of spinning forever, #8)
+          const tasksRes = await fetchWithTimeout(`${API_SERVER_URL}/api/tasks`, FETCH_TIMEOUT_MS);
           if (!tasksRes.ok) throw new Error(`Tasks API error: ${tasksRes.status}`);
           const tasksData = await tasksRes.json();
           const tasks = tasksData.data || [];
 
           // Fetch dashboard stats from API
-          const statsRes = await fetch(`${API_SERVER_URL}/api/dashboard/stats`);
+          const statsRes = await fetchWithTimeout(`${API_SERVER_URL}/api/dashboard/stats`, FETCH_TIMEOUT_MS);
           if (!statsRes.ok) throw new Error(`Stats API error: ${statsRes.status}`);
           const statsData = await statsRes.json();
           const stats = statsData.data || {};
