@@ -71,3 +71,7 @@ When projects integrate with Supabase/API:
 - GitHub Projects board: `yukilabs-core/projects/1` (overall backlog)
 - Each project has its own sub-project (Projects 2-6 for projects①-⑤)
 - Cloudflare Pages linked via GitHub App (auto-deploy on push)
+
+<!-- repo-compass-pointer -->
+## 判断軸
+- 作業前に `flipslidersand-labs/repo-compass` の `docs/AGENT_BRIEF.md` を読む(優先規則・ADR 一覧も同ファイル)。読めない環境では無視してよい。
